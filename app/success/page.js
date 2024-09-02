@@ -11,14 +11,16 @@ function SuccessContent() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const code = searchParams.get('referralCode');
-    if (code) {
-      setReferralCode(code);
-      const link = `${window.location.origin}?ref=${code}`;
-      setReferralLink(link);
+    if (typeof window !== 'undefined') {
+      const code = searchParams.get('referralCode');
+      if (code) {
+        setReferralCode(code);
+        const link = `${window.location.origin}?ref=${code}`;
+        setReferralLink(link);
 
-      // Effettua la chiamata per generare il link Telegram a singolo uso
-      generateTelegramLink(code);
+        // Effettua la chiamata per generare il link Telegram a singolo uso
+        generateTelegramLink(code);
+      }
     }
   }, [searchParams]);
 
