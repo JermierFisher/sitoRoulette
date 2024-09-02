@@ -1,6 +1,9 @@
 "use client";
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSlotMachine, faDice, faPlane, faBlackjack } from '@fortawesome/free-solid-svg-icons';
+
 
 export default function HomePage() {
   const [email, setEmail] = useState('');
@@ -91,19 +94,19 @@ export default function HomePage() {
             <h3 className="text-2xl font-bold text-gray-800 mb-4">Giochi Supportati dal Bot</h3>
             <div className="grid grid-cols-2 gap-4 text-center">
               <div className="p-4 bg-blue-100 rounded-lg shadow-md">
-                <h4 className="text-xl font-semibold text-blue-700">Roulette</h4>
+                <h4 className="text-xl font-semibold text-blue-700"><FontAwesomeIcon icon={faDice} size="2x" /> Roulette</h4>
                 <p className="text-gray-600 mt-2">Strategie avanzate per massimizzare le tue vincite.</p>
               </div>
               <div className="p-4 bg-purple-100 rounded-lg shadow-md">
-                <h4 className="text-xl font-semibold text-purple-700">Aviator</h4>
+                <h4 className="text-xl font-semibold text-purple-700"><FontAwesomeIcon icon={faPlane} size="2x" /> Aviator</h4>
                 <p className="text-gray-600 mt-2">Tattiche mirate per sfruttare al meglio ogni volo.</p>
               </div>
               <div className="p-4 bg-pink-100 rounded-lg shadow-md">
-                <h4 className="text-xl font-semibold text-pink-700">Slot</h4>
+                <h4 className="text-xl font-semibold text-pink-700"><FontAwesomeIcon icon={faSlotMachine} size="2x" /> Slot</h4>
                 <p className="text-gray-600 mt-2">Ottimizza le tue giocate per aumentare le probabilità di jackpot.</p>
               </div>
               <div className="p-4 bg-yellow-100 rounded-lg shadow-md">
-                <h4 className="text-xl font-semibold text-yellow-700">Blackjack</h4>
+                <h4 className="text-xl font-semibold text-yellow-700"><FontAwesomeIcon icon={faBlackjack} size="2x" /> Blackjack</h4>
                 <p className="text-gray-600 mt-2">Migliora le tue decisioni per battere il banco.</p>
               </div>
             </div>
