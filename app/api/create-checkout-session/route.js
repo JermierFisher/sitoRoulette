@@ -1,97 +1,37 @@
-'use client';
+import Stripe from 'stripe';
 
-import { useSearchParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+const stripe = new Stripe(process.env.Stripe);
 
-export default function SuccessPage() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const [referralCode, setReferralCode] = useState('');
-  const [referralLink, setReferralLink] = useState('');
-  const [telegramLink, setTelegramLink] = useState('');
-  const [loading, setLoading] = useState(true);
+export async function POST(req) {
+  const { email, referralCode } = await req.json();
 
-  useEffect(() => {
-    const code = searchParams.get('referralCode');
-    if (code) {
-      setReferralCode(code);
-      const link = `${window.location.origin}?ref=${code}`;
-      setReferralLink(link);
+  // Fallback per l'URL di origine, nel caso in cui req.headers.origin non sia definito
+  const origin = req.headers.origin || 'http://localhost:3000';
 
-      // Controlla se il link Telegram è già salvato nel localStorage
-      const savedTelegramLink = localStorage.getItem('telegramLink');
-      if (savedTelegramLink) {
-        setTelegramLink(savedTelegramLink);
-        setLoading(false);
-      } else {
-        // Se non è salvato, genera il link Telegram
-        generateTelegramLink(code);
-      }
-    } else {
-      // Se il referralCode non è presente, reindirizza alla pagina index
-      router.push('/');
-    }
-  }, [searchParams, router]);
-
-  const generateTelegramLink = async (referralCode) => {
-    try {
-      const response = await fetch('/api/generate-telegram-link', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      customer_email: email,
+      line_items: [
+        {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: 'Pre-Order Bot Telegram AI Casino',
+            },
+            unit_amount: 3500, // L'importo è in centesimi, quindi 5000 equivale a $50.00
+          },
+          quantity: 1,
         },
-        body: JSON.stringify({ referralCode }),
-      });
+      ],
+      mode: 'payment',
+      success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}&referralCode=${referralCode}`,
+      cancel_url: `${origin}/cancel`,
+    });
 
-      if (response.ok) {
-        const data = await response.json();
-        setTelegramLink(data.telegramLink);
-        // Salva il link Telegram nel localStorage
-        localStorage.setItem('telegramLink', data.telegramLink);
-      } else {
-        console.error('Errore nella generazione del link Telegram');
-      }
-    } catch (error) {
-      console.error('Errore nella richiesta al server', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-green-100 to-green-50 p-6">
-      <div className="card w-full max-w-lg bg-white shadow-xl rounded-lg text-center p-8">
-        <h2 className="text-3xl font-bold text-gray-800">Grazie per il pagamento!</h2>
-        <p className="text-gray-600 mt-4">Condividi il tuo link di affiliazione con i tuoi amici:</p>
-        <div className="bg-gray-100 text-gray-800 mt-6 p-4 rounded-lg font-mono break-all">
-          {referralLink}
-        </div>
-        <button
-          className="btn btn-primary bg-blue-600 hover:bg-blue-500 border-none mt-6"
-          onClick={() => navigator.clipboard.writeText(referralLink)}
-        >
-          Copia Link
-        </button>
-        <p className="text-gray-600 mt-4">
-          Per ogni persona che acquista il pre-order tramite il tuo link, riceverai un buono Amazon da <strong>10€</strong>!
-        </p>
-
-        {loading ? (
-          <p className="text-gray-600 mt-6">Generazione del link Telegram...</p>
-        ) : (
-          telegramLink && (
-            <div>
-              <p className="text-gray-600 mt-6">Ecco il tuo link di accesso al nostro canale Elite Telegram per rimanere aggiornato sull'uscita del bot</p>
-              <button
-                className="btn btn-primary bg-blue-600 hover:bg-blue-500 border-none mt-6"
-                onClick={() => window.open(telegramLink, '_blank')}
-              >
-                Apri Link Telegram
-              </button>
-            </div>
-          )
-        )}
-      </div>
-    </div>
-  );
+    return new Response(JSON.stringify({ url: session.url }), { status: 200 });
+  } catch (error) {
+    console.error('Error creating checkout session:', error);
+    return new Response(JSON.stringify({ error: 'Failed to create checkout session' }), { status: 500 });
+  }
 }
