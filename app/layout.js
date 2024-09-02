@@ -15,15 +15,15 @@ export default function RootLayout({ children }) {
       {/* Open Graph Tags */}
       <meta property="og:title" content="Pre-Order Esclusivo: Bot Telegram per Casinò Online - Guadagna Buoni Amazon!" />
       <meta property="og:description" content="Ottieni accesso al nostro bot Telegram avanzato per casinò online. Migliora le tue probabilità di vincita con AI e statistiche. Guadagna 10€ di buono Amazon per ogni referral!" />
-      <meta property="og:image" content="https://via.placeholder.com/600x315" />
-      <meta property="og:url" content="https://tua-pagina.com" />
+      <meta property="og:image" content="https://sito-roulette.vercel.app/logo.webp" />
+      <meta property="og:url" content="https://sito-roulette.vercel.app/" />
       <meta property="og:type" content="website" />
 
       {/* Twitter Card Tags */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content="Pre-Order Esclusivo: Bot Telegram per Casinò Online - Guadagna Buoni Amazon!" />
       <meta name="twitter:description" content="Acquista il pre-order per accedere al nostro bot Telegram avanzato per giochi di casinò. Offerta limitata! Guadagna 10€ di buono Amazon per ogni referral!" />
-      <meta name="twitter:image" content="https://via.placeholder.com/600x315" />
+      <meta name="twitter:image" content="https://sito-roulette.vercel.app/logo.webp" />
 
       {/* Favicon */}
       <link rel="icon" href="/favicon.ico" />
