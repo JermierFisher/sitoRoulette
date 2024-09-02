@@ -15,7 +15,7 @@ export async function POST(req) {
       line_items: [
         {
           price_data: {
-            currency: 'usd',
+            currency: 'eur',
             product_data: {
               name: 'Pre-Order Bot Telegram AI Casino',
             },
