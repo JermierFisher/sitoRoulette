@@ -1,11 +1,10 @@
 'use client';
 
-import { useSearchParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState, Suspense } from 'react';
 
-export default function SuccessPage() {
+function SuccessContent() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const [referralCode, setReferralCode] = useState('');
   const [referralLink, setReferralLink] = useState('');
   const [telegramLink, setTelegramLink] = useState('');
@@ -18,20 +17,10 @@ export default function SuccessPage() {
       const link = `${window.location.origin}?ref=${code}`;
       setReferralLink(link);
 
-      // Controlla se il link Telegram è già salvato nel localStorage
-      const savedTelegramLink = localStorage.getItem('telegramLink');
-      if (savedTelegramLink) {
-        setTelegramLink(savedTelegramLink);
-        setLoading(false);
-      } else {
-        // Se non è salvato, genera il link Telegram
-        generateTelegramLink(code);
-      }
-    } else {
-      // Se il referralCode non è presente, reindirizza alla pagina index
-      router.push('/');
+      // Effettua la chiamata per generare il link Telegram a singolo uso
+      generateTelegramLink(code);
     }
-  }, [searchParams, router]);
+  }, [searchParams]);
 
   const generateTelegramLink = async (referralCode) => {
     try {
@@ -46,8 +35,6 @@ export default function SuccessPage() {
       if (response.ok) {
         const data = await response.json();
         setTelegramLink(data.telegramLink);
-        // Salva il link Telegram nel localStorage
-        localStorage.setItem('telegramLink', data.telegramLink);
       } else {
         console.error('Errore nella generazione del link Telegram');
       }
@@ -81,7 +68,7 @@ export default function SuccessPage() {
         ) : (
           telegramLink && (
             <div>
-              <p className="text-gray-600 mt-6">Ecco il tuo link di accesso al nostro canale Elite Telegram per rimanere aggiornato sull'uscita del bot</p>
+              <p className="text-gray-600 mt-6">Ecco il tuo link di accesso al nostro canale Elite Telegram per rimanere aggiornato:</p>
               <button
                 className="btn btn-primary bg-blue-600 hover:bg-blue-500 border-none mt-6"
                 onClick={() => window.open(telegramLink, '_blank')}
@@ -93,5 +80,13 @@ export default function SuccessPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SuccessContent />
+    </Suspense>
   );
 }
